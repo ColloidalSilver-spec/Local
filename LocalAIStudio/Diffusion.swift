@@ -128,7 +128,7 @@ final class DiffusionEngine {
         let m = NSMutableData(bytes: &idsV, length: ids.count * 4)
         let input = try ORTValue(tensorData: m, elementType: .int32, shape: [1, NSNumber(value: ids.count)])
         let res = try s.run(withInputs: ["input_ids": input], outputNames: Set(["last_hidden_state"]), runOptions: nil)
-        guard let out = res?["last_hidden_state"] else {
+        guard let out = res["last_hidden_state"] else {
             throw NSError(domain: "DiffusionEngine", code: 3, userInfo: [NSLocalizedDescriptionKey: "No last_hidden_state output"])
         }
         return try Self.floats(of: out)
@@ -153,7 +153,7 @@ final class DiffusionEngine {
             "timestep": timestep,
             "encoder_hidden_states": enc,
         ], outputNames: Set(["out_sample"]), runOptions: nil)
-        guard let out = res?["out_sample"] else {
+        guard let out = res["out_sample"] else {
             throw NSError(domain: "DiffusionEngine", code: 5, userInfo: [NSLocalizedDescriptionKey: "No out_sample output"])
         }
         return try Self.floats(of: out)
@@ -167,7 +167,7 @@ final class DiffusionEngine {
         let m = NSMutableData(bytes: &scaled, length: scaled.count * 4)
         let latent = try ORTValue(tensorData: m, elementType: .float, shape: [NSNumber(value: 1), NSNumber(value: 4), NSNumber(value: latH), NSNumber(value: latW)])
         let res = try s.run(withInputs: ["latent_sample": latent], outputNames: Set(["sample"]), runOptions: nil)
-        guard let out = res?["sample"] else {
+        guard let out = res["sample"] else {
             throw NSError(domain: "DiffusionEngine", code: 7, userInfo: [NSLocalizedDescriptionKey: "No sample output"])
         }
         return try Self.floats(of: out)
