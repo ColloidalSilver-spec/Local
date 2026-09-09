@@ -209,7 +209,7 @@ struct ContentView: View {
                 let msg = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 await MainActor.run {
                     isDownloading = false
-                    error = msg
+                    self.error = msg
                 }
             }
         }
@@ -277,7 +277,7 @@ struct ContentView: View {
                 let msg = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 await MainActor.run {
                     isWorking = false
-                    error = msg
+                    self.error = msg
                 }
             }
         }

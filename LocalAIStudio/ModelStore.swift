@@ -83,9 +83,18 @@ enum ModelStore {
                               userInfo: [NSLocalizedDescriptionKey: "HTTP \(h.statusCode) downloading \(file.label)"])
             }
             var got: Int64 = 0
-            for try await chunk in bytes {
-                try fh.write(contentsOf: chunk)
-                got += Int64(chunk.count)
+            var buf = Data()
+            for try await byte in bytes {
+                buf.append(byte)
+                got += 1
+                if buf.count >= 1 << 20 {
+                    try fh.write(contentsOf: buf)
+                    buf.removeAll(keepingCapacity: true)
+                    onFileProgress(file.size > 0 ? Double(got) / Double(file.size) : 0)
+                }
+            }
+            if !buf.isEmpty {
+                try fh.write(contentsOf: buf)
                 onFileProgress(file.size > 0 ? Double(got) / Double(file.size) : 0)
             }
             try fh.close()
