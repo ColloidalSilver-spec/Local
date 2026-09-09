@@ -274,9 +274,10 @@ struct ContentView: View {
                     debugLog = debug
                 }
             } catch {
+                let msg = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 await MainActor.run {
                     isWorking = false
-                    error = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                    error = msg
                 }
             }
         }
